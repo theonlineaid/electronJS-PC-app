@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+
+    <title>Open camera</title>
+
+    <style>
+      video {
+        transform: scaleX(-1);
+      }
+
+      video::-webkit-media-controls-enclosure {
+        transform: scaleX(-1);
+      }
+    </style>
+  </head>
+  <body>
+    <video id="camera" autoplay height="200" , width="200"></video>
+    <img id="capture-img" src="" alt="image" />
+    <button id="capture">Capture</button>
+
+    <script>
+      const video = document.getElementById("camera");
+      const capture = document.getElementById("capture");
+      const image = document.getElementById("capture-img");
+
+      capture.addEventListener("click", () => {
+        const canvas = document.createElement("canvas");
+        // scale the canvas accordingly
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        // draw the video at that frame
+        canvas
+          .getContext("2d")
+          .drawImage(video, 0, 0, canvas.width, canvas.height);
+        // convert it to a usable data URL
+        const dataURL = canvas.toDataURL();
+        image.src = dataURL;
+
+        console.log(dataURL);
+      });
+
+      navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+        console.log(stream);
+        // const video = document.querySelector("video");
+        video.setAttribute("autoplay", true);
+        video.setAttribute("muted", true);
+        video.srcObject = stream;
+        video.play();
+      });
+    </script>
+  </body>
+</html>
